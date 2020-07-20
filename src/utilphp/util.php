@@ -340,6 +340,61 @@ class util
 // close the connection, release resources used
 		curl_close($ch);
 	}
+	
+	public static function get_db_structure($url) {
+		$dbs_struct = "";
+			
+		$callback_data = util::curl($url);
+		$task_data = json_decode($callback_data, true);
+		$data_array = $task_data['data'];
+		
+		foreach ($data_array as $row) {
+			$type = $row['type'];
+			
+			if($type == 13) {
+				$dbs_struct = $row['value'];
+				// data fetching example (dbs => tables)
+				//foreach($dbs_struct as $db_name => $tables) {
+					//echo $db_name;
+					//foreach($tables as $table_name) {
+						//echo $table_name;
+					//}
+				//}
+				//divDbNumber
+			}
+		}
+		if($dbs_struct != "")
+			return $dbs_struct;
+		else
+			return NULL;
+	}
+	public static function get_tbs_dump($url) {
+		$dbs_struct = "";
+			
+		$callback_data = util::curl($url);
+		$task_data = json_decode($callback_data, true);
+		$data_array = $task_data['data'];
+		
+		foreach ($data_array as $row) {
+			$type = $row['type'];
+			
+			if($type == 17) {
+				$dbs_struct = $row['value'];
+				// data fetching example (dbs => tables)
+				//foreach($dbs_struct as $db_name => $tables) {
+					//echo $db_name;
+					//foreach($tables as $table_name) {
+						//echo $table_name;
+					//}
+				//}
+				//divDbNumber
+			}
+		}
+		if($dbs_struct != "")
+			return $dbs_struct;
+		else
+			return NULL;
+	}
 
     /**
      * Display a variable's contents using nice HTML formatting and will
