@@ -16,16 +16,18 @@ else {
 	$tasks_list = $response['tasks'];
 	
 	
-	// ==================== TO TEST ======================
+	
 	if($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["newtask_target"])) {
 		echo "<script>alert('" . $_POST["newtask_target"] . "')</script>";
-		$params = json_encode(['url'=>$_POST["newtask_target"]]);
+		
 		$callback_newtask = util::curl($_SESSION["endpoint"] . "/task/new");
 		$newtask_id = json_decode($callback_newtask,true)['taskid'];
-		echo $callback_newtask;
 		echo "<script>console.log('task created with id " . $newtask_id . "')</script>";
 		
+		$params_array = ['url'=>$_POST["newtask_target"],'level'=>$_POST["level"],'risk'=>$_POST["risk"],'forms'=>true,'getTables'=>true]; // workaround
+		$params = json_encode($params_array);
 		$callback_newtask_scan = util::curl_post($_SESSION["endpoint"] . "/scan/" . $newtask_id . "/start", $params);
+		
 		$scan_status = json_decode($callback_newtask_scan,true);
 
 		
@@ -60,7 +62,7 @@ else {
 		echo "no param";
 	}
 	
-	if($_SESSION["userId"]){
+	if(isset($_SESSION["userId"])){
 		$wrapper_actions = [];
 		$wrapper_target = [];
 		$wrapper_dates = [];
@@ -104,6 +106,9 @@ else {
 				// Close statement
 				mysqli_stmt_close($stmt);
 			}
+		}
+		else {
+			echo $_SESSION["userId"];
 		}
 		
 		// Close connection
@@ -232,7 +237,7 @@ else {
       <div class="col-md-12">
         <div class="panel panel-default" id="serverinfo">
           <div class="panel-heading">
-            <h3 class="panel-title">Task creation</h3>
+            <h3 class="panel-title"> Recon Task Creation</h3>
           </div>
           <div class="panel-body">
             
@@ -247,7 +252,7 @@ else {
 			  <div class="form-row">
 				<div class="input-group col-md-1">
 				  <label for="inputState">Risk</label>
-				  <select id="inputState" class="form-control">
+				  <select id="inputState" class="form-control" name="risk">
 					<option selected>1</option>
 					<option>2</option>
 					<option selected>3</option>
@@ -255,7 +260,7 @@ else {
 				</div>
 				<div class="input-group col-md-1">
 				  <label for="inputState">Level</label>
-				  <select id="inputState" class="form-control">
+				  <select id="inputState" class="form-control" name="level">
 					<option>1</option>
 					<option>2</option>
 					<option>3</option>
